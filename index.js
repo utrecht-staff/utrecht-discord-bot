@@ -1,6 +1,5 @@
 const discord = require("discord.js");
 const botconfig = require("./botconfig");
-const levelFile = require("./data/levels.json");
 
 const fs = require("fs");
 
@@ -37,40 +36,50 @@ bot.on("ready", () => {
     bot.user.setPresence({
         status: "online",
         game: {
-            name: "TTCraft || play.ttcraft.nl || !help",
+            name: "Utrecht || roblox.com || !help",
             type: "PLAYING"
         }
     });
 });
 
-// bot.on("guildmemberAdd", member => {
-
-//     var role = member.guild.roles.find("name", "Speler");
-
-//     if (!role) return;
-
-//     member.addRole(role);
-
-//     const channel = member.guild.channels.find("name", "welkom");
-
-//     if (!channel) return;
-
-//     channel.send(`Welkom in ${server.name}, ${member}`);
-
-// });
-
 bot.on("guildMemberAdd", member => {
 
-    const channel = member.guild.channels.find("name", "welkom");
+    const channel = member.guild.channels.find("name", "welkom-en-tot-ziens");
     if (!channel) console.log("Kanaal `Welkom` niet gevonden..");
 
+    var role = member.guild.roles.find("name", "Speler");
+
+        if (!role) return;
+    
+        member.addRole(role);
+
     var JoinMessage = new discord.RichEmbed()
-        .setTitle("_Er is een speler gejoind!_")
+        .setTitle("_Nieuwe Speler!_")
         .setAuthor(`${member.user.tag}`, member.user.displayAvatarURL)
         .setDescription(`Hey ${member.user.username}, **Welkom in de server!**`)
         .setColor("#00ff00")
-        .setTimestamp()
-        .setFooter("Join system");
+        .setTimestamp();
+
+    channel.send(JoinMessage);
+
+});
+bot.on("guildMemberRemove", member => {
+
+    const channel = member.guild.channels.find("name", "welkom-en-tot-ziens");
+    if (!channel) console.log("Kanaal `Welkom` niet gevonden..");
+
+    var role = member.guild.roles.find("name", "Speler");
+
+        if (!role) return;
+    
+        member.removeRole(role);
+
+    var JoinMessage = new discord.RichEmbed()
+        .setTitle("_Speler weg!_")
+        .setAuthor(`${member.user.tag}`, member.user.displayAvatarURL)
+        .setDescription(`${member.user.username} is verhuist naar een andere stad!`)
+        .setColor("#ff0000")
+        .setTimestamp();
 
     channel.send(JoinMessage);
 
@@ -98,57 +107,6 @@ bot.on("message", async message => {
     var commands = bot.commands.get(command.slice(prefix.length));
 
     if (commands) commands.run(bot, message, arguments);
-
-    var randomXp = Math.floor(Math.random(1) * 15) + 1;
-
-    var idUser = message.author.id;
-
-    if (!levelFile[idUser]) {
-
-
-        levelFile[idUser] = {
-
-            xp: 0,
-            level: 0 
-
-
-        }
-
-    }
-        console.log(randomXp);
-
-
-
-    levelFile[idUser].xp += randomXp;
-
-    var levelUser = levelFile[idUser].level;
-    var xpuser = levelFile[idUser].xp;
-    var nextLevelXp = levelUser * 300;
-
-    if (!nextLevelXp === 0) nextLevelXp = 100;
-
-    if (xpuser >= nextLevelXp) {
-
-        levelFile[idUser].level += 1;
-
-        fs.writeFile("./data/levels.json", JSON.stringify(levelFile), err => {
-
-            if (err) console.log(err);
-
-        });
-
-        var embedLevel = new discord.RichEmbed()
-        .setTitle("**LEVEL UP!!**")
-        .addField("Level: ",  levelFile[idUser].level)
-        .setColor("74ff87");
-
-        message.channel.send(embedLevel);
-    }
-    if(!message.content.startsWith(prefix)) return;
-    if(cooldown.has(message.author.id)){
-        message.delete();
-        message.channel.send("Je moet 5 seconden wachten om te kunnen praten..")
-    }
 
 
 
