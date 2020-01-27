@@ -1,20 +1,21 @@
 {
-  "name": "ttcraft_bot",
+  "name": "amsterdam-bot",
   "version": "1.0.0",
-  "description": "bot voor ttcraft",
+  "description": "Discord Bot voor de Amsterdam server van de Amsterdam game",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon"
   },
   "keywords": [
-    "ttcraft",
-    "bot"
+    "BOT",
+    "Amsterdam"
   ],
-  "author": "Chris",
+  "author": "Fedde",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "ms": "^2.1.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

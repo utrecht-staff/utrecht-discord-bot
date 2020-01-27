@@ -1,5 +1,5 @@
 const discord = require("discord.js");
-const botconfig = require("./botconfig");
+const botConfig = require("./botconfig.json");
 
 const fs = require("fs");
 
@@ -13,89 +13,53 @@ fs.readdir("./commands/", (err, files) => {
     var jsFiles = files.filter(f => f.split(".").pop() === "js");
 
     if (jsFiles.length <= 0) {
-        console.log("Kon geen files vinden");
+        console.log("Kon geen files vinden!");
         return;
     }
 
     jsFiles.forEach((f, i) => {
 
         var fileGet = require(`./commands/${f}`);
-        console.log(`De file ${f} is geladen`);
+        console.log(`${f} is geladen!`);
 
-        bot.commands.set(fileGet.help.name, fileGet);
-
+        bot.commands.set(fileGet.help.name, fileGet)
 
     })
 
-
 });
 
-bot.on("ready", () => {
-    console.log("Bot is online");
 
-    bot.user.setPresence({
-        status: "online",
-        game: {
-            name: "Utrecht || roblox.com || !help",
-            type: "PLAYING"
-        }
-    });
+bot.on("ready", async () => {
+
+    console.log(`${bot.user.username} is online!`);
+
+    bot.user.setActivity("Utrecht op Roblox", { type: "PLAYING" });
+
 });
 
 bot.on("guildMemberAdd", member => {
-
-    const channel = member.guild.channels.find("name", "welkom-en-tot-ziens");
-    if (!channel) console.log("Kanaal `Welkom` niet gevonden..");
-
     var role = member.guild.roles.find("name", "Speler");
 
-        if (!role) return;
-    
-        member.addRole(role);
+    if (!role) return;
 
-    var JoinMessage = new discord.RichEmbed()
-        .setTitle("_Nieuwe Speler!_")
-        .setAuthor(`${member.user.tag}`, member.user.displayAvatarURL)
-        .setDescription(`Hey ${member.user.username}, **Welkom in de server!**`)
-        .setColor("#00ff00")
-        .setTimestamp();
-
-    channel.send(JoinMessage);
-
-});
-bot.on("guildMemberRemove", member => {
+    member.addRole(role);
 
     const channel = member.guild.channels.find("name", "welkom-en-tot-ziens");
-    if (!channel) console.log("Kanaal `Welkom` niet gevonden..");
 
-    var role = member.guild.roles.find("name", "Speler");
+    if (!channel) return;
 
-        if (!role) return;
-    
-        member.removeRole(role);
-
-    var JoinMessage = new discord.RichEmbed()
-        .setTitle("_Speler weg!_")
-        .setAuthor(`${member.user.tag}`, member.user.displayAvatarURL)
-        .setDescription(`${member.user.username} is verhuist naar een andere stad!`)
-        .setColor("#ff0000")
-        .setTimestamp();
-
-    channel.send(JoinMessage);
-
-});
-
-
-
+    channel.send(`Welkom in Utrecht ${member}`);
+})
 
 
 bot.on("message", async message => {
+
 
     if (message.author.bot) return;
 
     if (message.channel.type === "dm") return;
 
-    var prefix = botconfig.prefix;
+    var prefix = botConfig.prefix;
 
     var messageArray = message.content.split(" ");
 
@@ -103,16 +67,12 @@ bot.on("message", async message => {
 
     var arguments = messageArray.slice(1);
 
-
     var commands = bot.commands.get(command.slice(prefix.length));
 
     if (commands) commands.run(bot, message, arguments);
 
 
-
 });
 
 
-
-
-bot.login(process.env.token); 
+bot.login(process.env.token);
