@@ -1,28 +1,42 @@
 const discord = require("discord.js");
-
-module.exports.run  = async (bot, message, args) => {
-
-    var idee = args.join(' ');
-    if (!idee) return message.channel.send("Gebruik: !idee [Jouw idee].")
-
+ 
+module.exports.run = async (bot, message, args) => {
+ 
+    // Vang het idee op.
+    var idee = args.join(" ");
+ 
+    // Kijk na als er een idee is meegegeven.
+    if (!idee) return message.channel.send("Geen idee opgegeven! Gelieve een idee op te geven.");
+ 
+    // Maak het embed aan.
+    var icon = message.author.displayAvatarURL;
     var ideeEmbed = new discord.RichEmbed()
-    .setTitle("Idee")
-    .setColor("00ff00")
-    .addField("Idee:", idee)
-    .addField("Idee van:", message.author);
-
-    var ideeChannel = message.guild.channels.find("name", "idee");
-    if (!ideeChannel) return message.channel.send("Maak een kanaal **idee** aan.");
-
-    message.author.send("Bedankt voor je idee, Als het een goed idee is zullen we kijken of we het gaan toepassen.");
-
+        .setTitle("Nieuw Idee")
+        .setColor("#00FF00")
+        .setThumbnail(icon)
+        .addField("Idee: ", idee)
+        .addField("Ingezonden door: ", message.author);
+ 
+    // Vind het kanaal.
+    var ideeChannel = message.guild.channels.find(`name`, "ideeën");
+    if (!ideeChannel) return message.guild.send("Kan het kanaal niet vinden");
+ 
+    // Verzend het bericht en voeg er reacties aan toe.
     ideeChannel.send(ideeEmbed).then(embedMessage => {
         embedMessage.react('👍');
         embedMessage.react('👎');
     });
 
-}
+    var succesEmbed = new discord.RichEmbed()
+    .setDescription(`Hallo, ${message.author}! Bedankt voor het idee! U helpt ons om Utrecht beter te maken!`)
+    .setColor("00FF00");
+    return message.channel.send(succesEmbed);
+ 
+    // Einde.
 
+}
+ 
 module.exports.help = {
-    name: "idee"
+    name: "idee",
+    description: "Heb je een idee. Zet het dan hier en misschien passen we het toe."
 }

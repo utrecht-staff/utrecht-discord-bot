@@ -1,13 +1,12 @@
 const discord = require("discord.js");
 
-module.exports.run  = async (bot, message, args) => {
+module.exports.run = async (bot, message, args) => {
 
-
-    return message.channel.send(`Hoi ${message.author}`);
+    return message.channel.send(`Hallo ${message.author}!`);
 
 }
 
-
 module.exports.help = {
-    name: "hallo"
+    name: "hallo",
+    description: "Zeg hallo tegen Utrecht."
 }
